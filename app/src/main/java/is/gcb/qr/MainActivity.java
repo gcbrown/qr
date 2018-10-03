@@ -10,8 +10,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -82,9 +80,6 @@ public class MainActivity extends Activity {
         opened = true;
         lastValue = b.displayValue;
         switch (b.valueFormat) {
-            case Barcode.URL:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(b.displayValue)));
-                break;
             case Barcode.PHONE:
                 runOnUiThread(() -> new AlertDialog.Builder(this)
                         .setTitle(b.phone.number)
@@ -106,6 +101,11 @@ public class MainActivity extends Activity {
                         .setOnDismissListener(dialogInterface -> resetStatus())
                         .show());
                 break;
+            case Barcode.URL:
+                Intent openURL = new Intent(Intent.ACTION_VIEW, Uri.parse(b.displayValue));
+                if (openURL.resolveActivity(getPackageManager()) != null)
+                    startActivity(openURL);
+                    break;
             default:
                 runOnUiThread(() -> new AlertDialog.Builder(this)
                         .setTitle("Text")
@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
 
     private void startCameraSource() {
         //if camera permission, start recording, otherwise request permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (checkSelfPermission(Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             try {
                 source.start(view.getHolder());
@@ -136,8 +136,7 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA}, 1001);
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1001);
         }
     }
 
