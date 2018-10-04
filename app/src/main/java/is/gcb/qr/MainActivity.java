@@ -24,12 +24,12 @@ import java.io.IOException;
 
 public class MainActivity extends Activity {
 
-    boolean opened;
-    String lastValue;
-    long lastTime;
+    private boolean opened;
+    private String lastValue;
+    private long lastTime;
 
-    CameraSource source;
-    SurfaceView view;
+    private CameraSource source;
+    private SurfaceView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
                         .setTitle("Send Message")
                         .setMessage("Send '" + b.sms.message + "' to " + b.sms.phoneNumber + "?")
                         .setPositiveButton("Send", ((dialogInterface, i) ->
-                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + b.sms.phoneNumber))
+                                startActivity(new Intent(Intent.ACTION_SENDTO, Uri.parse("sms:" + b.sms.phoneNumber))
                                         .putExtra("sms_body", b.sms.message))))
                         .setNegativeButton("Cancel", null)
                         .setOnDismissListener(dialogInterface -> resetStatus())
@@ -128,8 +128,7 @@ public class MainActivity extends Activity {
 
     private void startCameraSource() {
         //if camera permission, start recording, otherwise request permission
-        if (checkSelfPermission(Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             try {
                 source.start(view.getHolder());
             } catch (IOException e) {
