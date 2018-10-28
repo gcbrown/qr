@@ -103,9 +103,10 @@ public class MainActivity extends Activity {
                 break;
             case Barcode.URL:
                 Intent openURL = new Intent(Intent.ACTION_VIEW, Uri.parse(b.displayValue));
-                if (openURL.resolveActivity(getPackageManager()) != null)
+                if (openURL.resolveActivity(getPackageManager()) != null) {
                     startActivity(openURL);
                     break;
+                }
             default:
                 runOnUiThread(() -> new AlertDialog.Builder(this)
                         .setTitle("Text")
